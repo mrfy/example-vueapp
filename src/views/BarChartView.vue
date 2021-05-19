@@ -6,7 +6,7 @@
       :margin-left="40"
       :margin-top="40"
       :tick-count="5"
-      :bar-padding="0.5"
+      :bar-padding="0.4"
     />
   </div>
 </template>

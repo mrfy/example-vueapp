@@ -11,16 +11,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/ribbonAdv",
     name: "advRibbon.index",
-    component: () =>
-      import(
-        /* webpackChunkName: "blog-create" */ "../views/AdvancedRibbon.vue"
-      ),
+    component: () => import("../views/AdvancedRibbon.vue"),
   },
   {
     path: "/barChartView",
     name: "barChartView.index",
-    component: () =>
-      import(/* webpackChunkName: "blog-create" */ "../views/BarChartView.vue"),
+    component: () => import("../views/BarChartView.vue"),
   },
 ];
 

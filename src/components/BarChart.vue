@@ -1,15 +1,19 @@
 <template>
-  <svg class="barchart" :width="width" :height="height">
-    <g class="bars" fill="none">
-      <rect
-        v-for="(bar, index) in bars"
-        fill="pink"
-        :key="index"
-        :height="bar.height"
-        :width="bar.width"
-        :x="bar.x"
-        :y="bar.y"
-      ></rect>
+  <svg class="ribbon" :width="width + 40" :height="height + 40">
+    <g transform="translate(20, 20)">
+      <g class="bars" fill="none">
+        <rect
+          style="stroke-width:31;stroke:{{bar.fill}}"
+          v-for="(bar, index) in bars"
+          :fill="bar.fill"
+          :key="index"
+          :height="bar.height"
+          :width="bar.width"
+          :x="bar.x"
+          :y="0"
+          v-on:click="addTwo"
+        ></rect>
+      </g>
     </g>
   </svg>
 </template>
@@ -19,38 +23,43 @@ import { computed, defineComponent, ref } from "vue";
 import d3 from "@/assets/d3";
 
 export default defineComponent({
-  name: "BarChart",
+  name: "Ribbonbar",
   props: {
     dataSet: { default: [] },
+    barPadding: { default: 0.3 },
   },
   setup(props) {
-    const width = ref(500);
-    const height = ref(200);
+    const addTwo = () => {
+      console.log("click");
+    };
 
-    const x = computed(() => {
-      return d3
-        .scaleBand()
-        .range([0, width.value])
-        .padding(0.3)
-        .domain(props.dataSet.map((e) => e[0]));
-    });
+    const width = ref(200);
+    const height = ref(100);
 
-    const y = computed(() => {
+    const arrSum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
+
+    const segLong = computed(() => {
       let values = props.dataSet.map((e) => e[1]);
+      let sum = arrSum(values);
       return d3
         .scaleLinear()
-        .range([height.value, 0])
-        .domain([0, Math.max(...values)]);
+        .range([0, width.value])
+        .domain([0, sum]);
     });
 
     const bars = computed(() => {
+      let xPos: any[] = [];
       let bars = props.dataSet.map((d) => {
+        let longitude = arrSum(xPos);
+        xPos.push(segLong.value(d[1]));
+
         return {
           xLabel: d[0],
-          x: x.value(d[0]),
-          y: y.value(d[1]),
-          width: x.value.bandwidth(),
-          height: height.value - y.value(d[1]),
+          x: xPos.length > 1 ? longitude : 0,
+          y: 0,
+          width: segLong.value(d[1]) + 1,
+          height: 35,
+          fill: "#" + Math.floor(Math.random() * 16777215).toString(16),
         };
       });
       return bars;
@@ -60,6 +69,7 @@ export default defineComponent({
       height: height.value,
       width: width.value,
       bars,
+      addTwo,
     };
   },
 });
