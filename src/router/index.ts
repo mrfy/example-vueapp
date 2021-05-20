@@ -14,9 +14,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/AdvancedRibbon.vue"),
   },
   {
-    path: "/barChartView",
-    name: "barChartView.index",
-    component: () => import("../views/BarChartView.vue"),
+    path: "/RibbonBarView",
+    name: "RibbonBarView.index",
+    component: () => import("../views/RibbonBarView.vue"),
   },
 ];
 

@@ -11,8 +11,8 @@
         >
       </li>
       <li>
-        <router-link :to="{ name: 'barChartView.index' }">
-          barChartView index</router-link
+        <router-link :to="{ name: 'RibbonBarView.index' }">
+          RibbonBar</router-link
         >
       </li>
     </ul>

@@ -5,7 +5,6 @@
     <main class="container page">
       <router-view />
     </main>
-    <app-footer />
   </div>
 </template>
 
