@@ -4,7 +4,7 @@
       Width: <span>{{ bar.width }}</span>
     </p>
     <p>fill: {{ bar.fill }}</p>
-    <p>Quantity: 222</p>
+    <p>Quantity: aa</p>
   </div>
 </template>
 

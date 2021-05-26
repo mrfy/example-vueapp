@@ -1,4 +1,4 @@
-<template id="ribbonBar">
+<template id="mockedRibbonBar">
   <div class="center">
     <Tooltip
       v-if="tooltipObj.showTooltip"
@@ -50,17 +50,25 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  PropType,
+  toRefs,
+} from "vue";
 import d3 from "@/assets/d3";
 import Tooltip from "@/components/RibbonBar/StateTooltip.vue";
+import { RibbonDataType } from "../../types";
 
 export default defineComponent({
-  name: "Ribbonbar",
-  template: "#ribbonBar",
+  name: "MockedRibbonbar",
+  template: "#mockedRibbonBar",
   props: {
-    dataSet: { default: [] },
-    barPadding: { default: 0.3 },
-    showScale: { default: false },
+    dataSet: { type: Object as PropType<RibbonDataType>, required: true },
+    barPadding: { type: Number, default: 0.3 },
+    showScale: { type: Boolean, default: false },
   },
   components: {
     Tooltip,
@@ -74,29 +82,38 @@ export default defineComponent({
       showTooltip: false,
       bar: {},
     });
+    let bars = {};
+
+    console.log(`props.dataSet`, props.dataSet);
 
     const arrSum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
 
     const segLong = computed(() => {
-      let values = props.dataSet.map((e) => e[1]);
-      let sum = arrSum(values);
+      const from_ms = props.dataSet.domain.from.getTime();
+      const to_ms = props.dataSet.domain.to.getTime();
+      const difference_ms = to_ms - from_ms;
+
+      // let values = props.dataSet.map((e) => e[1]);
+      // let sum = arrSum(values);
+
       return d3
         .scaleLinear()
         .range([0, width.value])
-        .domain([0, sum]);
+        .domain([0, difference_ms]);
     });
 
-    const bars = computed(() => {
+    bars = computed(() => {
       let xPos: any[] = [];
-      let bars = props.dataSet.map((d) => {
+      let bars = props.dataSet.states.map((d) => {
         let longitude = arrSum(xPos);
-        xPos.push(segLong.value(d[1]));
+        const stateWidth = d.period.to.getTime() - d.period.from.getTime();
+        xPos.push(segLong.value(stateWidth));
 
         return {
-          xLabel: d[0],
+          xLabel: d.description,
           x: xPos.length > 1 ? longitude : 0,
           y: 0,
-          width: segLong.value(d[1]) + 1,
+          width: segLong.value(stateWidth) + 1,
           height: 35,
           fill: "#" + Math.floor(Math.random() * 16777215).toString(16),
         };
@@ -104,6 +121,7 @@ export default defineComponent({
       return bars;
     });
 
+    console.log(`bars`, bars);
     const move = (evt: any, bar: any) => {
       tooltipObj.toolTipX = evt.pageX;
       tooltipObj.toolTipY = evt.pageY;
@@ -112,6 +130,7 @@ export default defineComponent({
     };
 
     const cancelMove = function() {
+      console.log(`cancelMove`);
       tooltipObj.showTooltip = false;
     };
 

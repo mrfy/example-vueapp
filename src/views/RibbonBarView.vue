@@ -8,20 +8,36 @@
       <div>
         <input
           type="checkbox"
-          id="scaleCheck"
-          name="scaleCheck"
-          :checked="scaleChecked"
-          v-model="scaleChecked"
+          id="showScale"
+          name="showScale"
+          v-model="showScale"
         />
-        {{ scaleChecked }}
-        <label for="scales">Scale</label>
+        <label for="scales">Display scale</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="showTooltip"
+          name="showTooltip"
+          v-model="showTooltip"
+        />
+        <label for="scales">Display tooltip</label>
       </div>
     </div>
 
     <RibbonBar
       class="chart"
       :data-set="data"
-      :scaleChecked="scaleChecked"
+      :showScale="showScale"
+      :margin-left="40"
+      :margin-top="40"
+      :tick-count="5"
+      :bar-padding="0.4"
+    />
+    <MckedRibbonBar
+      class="chart"
+      :data-set="RibbonDataJSON"
+      :showScale="showScale"
       :margin-left="40"
       :margin-top="40"
       :tick-count="5"
@@ -33,11 +49,14 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import RibbonBar from "@/components/RibbonBar/RibbonBar.vue";
+import MckedRibbonBar from "@/components/RibbonBar/MockedRibbonBar.vue";
+import { RibbonDataJSON } from "../mocks/ribbonData";
 
 export default defineComponent({
   name: "ribbonBarView",
   components: {
     RibbonBar,
+    MckedRibbonBar,
   },
   setup() {
     const def = [];
@@ -47,11 +66,10 @@ export default defineComponent({
     }
     const inputValue = ref(10);
     const dataOnRibbon = ref(def);
-    const scaleChecked = ref(false);
+    const showScale = ref(true);
 
     const onSubmit = () => {
       dataOnRibbon.value = [];
-      console.log(`scaleChecked.value`, scaleChecked.value);
       for (let index = 0; index < inputValue.value; index++) {
         let newRow = ["12:00", Math.floor(Math.random() * 33)];
         dataOnRibbon.value.push(newRow);
@@ -61,8 +79,9 @@ export default defineComponent({
     return {
       data: dataOnRibbon,
       inputValue,
-      scaleChecked,
+      showScale,
       onSubmit,
+      RibbonDataJSON,
     };
   },
 });
