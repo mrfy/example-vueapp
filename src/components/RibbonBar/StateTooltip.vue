@@ -8,7 +8,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { Bar } from "@/types";
+import { computed, defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "App",
@@ -16,7 +17,7 @@ export default defineComponent({
   props: {
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
-    bar: Object,
+    bar: { type: Object as PropType<Bar>, required: true },
   },
   setup(props) {
     const position = computed(() => {

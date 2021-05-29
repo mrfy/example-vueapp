@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from "vue";
-import d3 from "@/assets/d3";
+import d3s from "@/assets/d3s";
 import FakeTooltip from "@/components/RibbonBar/FakeTooltip.vue";
 
 export default defineComponent({
@@ -80,7 +80,7 @@ export default defineComponent({
     const segLong = computed(() => {
       let values = props.dataSet.map((e) => e[1]);
       let sum = arrSum(values);
-      return d3
+      return d3s
         .scaleLinear()
         .range([0, width.value])
         .domain([0, sum]);

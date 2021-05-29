@@ -1,12 +1,11 @@
 <template id="mockedRibbonBar">
   <div class="center">
     <Tooltip
-      v-if="tooltipObj.showTooltip"
+      v-if="showTooltip && tooltipObj.tooltipVisible"
       :x="tooltipObj.toolTipX"
       :y="tooltipObj.toolTipY"
       :bar="tooltipObj.bar"
     />
-
     <svg ref="svgRef" class="ribbon" :width="width + 40" :height="height + 40">
       <g transform="translate(20, 20)">
         <g class="bars" fill="none">
@@ -23,12 +22,7 @@
             v-on:mouseout="cancelMove"
           ></rect>
         </g>
-        <g
-          v-if="showScale"
-          class="time-axis"
-          fill="none"
-          :transform="`translate(0, 35)`"
-        />
+        <g class="time-axis" fill="none" :transform="`translate(0, 35)`" />
       </g>
     </svg>
   </div>
@@ -48,7 +42,7 @@ import {
   ref,
   watchEffect,
 } from "vue";
-import { RibbonDataType } from "../../types";
+import { Bar, RibbonDataType } from "../../types";
 import moment from "moment";
 
 export default defineComponent({
@@ -58,6 +52,7 @@ export default defineComponent({
     dataSet: { type: Object as PropType<RibbonDataType>, required: true },
     barPadding: { type: Number, default: 0.3 },
     showScale: { type: Boolean, default: false },
+    showTooltip: { type: Boolean, default: false },
   },
   components: {
     Tooltip,
@@ -70,8 +65,8 @@ export default defineComponent({
     const tooltipObj = reactive({
       toolTipX: 0,
       toolTipY: 0,
-      showTooltip: false,
       bar: {},
+      tooltipVisible: false,
     });
     let bars = {};
 
@@ -85,15 +80,18 @@ export default defineComponent({
           .range([0, width.value])
           .nice();
 
+        const opacity = props.showScale ? 1 : 0;
+
         svg
           .select(".time-axis")
-          .call(d3.axisBottom(timeScale) as any)
+          .call(d3.axisBottom(timeScale) as never) //!! fakkkkkkkkk !!
           .attr("stroke", "#000")
-          .attr("stroke-opacity", "0.1");
+          .attr("stroke-opacity", "0.1")
+          .style("opacity", opacity);
       });
     });
 
-    const arrSum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
+    const arrSum = (arr: number[]): number => arr.reduce((a, b) => a + b, 0);
 
     const from_ms = props.dataSet.domain.from.getTime();
     const to_ms = props.dataSet.domain.to.getTime();
@@ -107,7 +105,7 @@ export default defineComponent({
     });
 
     bars = computed(() => {
-      let xPos: any[] = [];
+      let xPos: number[] = [];
       let bars = props.dataSet.states.map((d) => {
         let longitude = arrSum(xPos);
         const stateWidth = d.period.to.getTime() - d.period.from.getTime();
@@ -128,15 +126,15 @@ export default defineComponent({
       return bars;
     });
 
-    const move = (evt: any, bar: any) => {
+    const move = (evt: any, bar: Bar) => {
       tooltipObj.toolTipX = evt.pageX;
       tooltipObj.toolTipY = evt.pageY;
-      tooltipObj.showTooltip = true;
+      tooltipObj.tooltipVisible = true;
       tooltipObj.bar = bar;
     };
 
     const cancelMove = function() {
-      tooltipObj.showTooltip = false;
+      tooltipObj.tooltipVisible = false;
     };
 
     return {

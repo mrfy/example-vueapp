@@ -1,4 +1,4 @@
-export interface RibbonDataType {
+interface RibbonDataType {
   domain: {
     from: Date;
     to: Date;
@@ -14,3 +14,16 @@ export interface RibbonDataType {
     }
   ];
 }
+interface Bar {
+  label: string;
+  x: number;
+  period: { from: Date; to: Date };
+  from: string;
+  to: string;
+  width: number;
+  height: number;
+  duration: string;
+  fill: string;
+}
+
+export { Bar, RibbonDataType };
