@@ -1,5 +1,5 @@
 <template>
-  <div class="container page">
+  <div class="container page" id="app">
     <Header />
     <Sidebar />
     <main class="container page">
@@ -18,3 +18,19 @@ export default defineComponent({
   components: { Sidebar, Header },
 });
 </script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  max-width: 720px;
+  margin: 100px auto;
+  padding: 0 20px;
+}
+
+.buttons {
+  margin-top: 2rem;
+}
+</style>

@@ -1,10 +1,7 @@
 <template>
-  <div style="display: table-caption">
+  <div>
+    <label for="scales">Synapstry® ribbon component</label>
     <div id="v-model-basic" class="demo">
-      <input v-model="inputValue" placeholder="edit me" @keyup.enter="addPet" />
-      <button class="button is-link" @click="onSubmit">Submit</button>
-
-      <p>Random states cnt is: {{ inputValue }}</p>
       <div>
         <input
           type="checkbox"
@@ -24,40 +21,24 @@
         <label for="scales">Display tooltip</label>
       </div>
     </div>
-
-    <!-- <RibbonBar
-      class="chart"
-      :data-set="data"
-      :showScale="showScale"
-      :margin-left="40"
-      :margin-top="40"
-      :tick-count="5"
-      :bar-padding="0.4"
-    /> -->
-    <MckedRibbonBar
+    <mocked-ribbon-bar
       class="chart"
       :data-set="RibbonDataJSON"
       :showScale="showScale"
       :showTooltip="showTooltip"
-      :margin-left="40"
-      :margin-top="40"
-      :tick-count="5"
-      :bar-padding="0.4"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-// import RibbonBar from "@/components/RibbonBar/RibbonBar.vue";
-import MckedRibbonBar from "@/components/RibbonBar/MockedRibbonBar.vue";
+import MockedRibbonBar from "@/components/RibbonBar/MockedRibbonBar.vue";
 import { RibbonDataJSON } from "../mocks/ribbonData";
 
 export default defineComponent({
   name: "ribbonBarView",
   components: {
-    // RibbonBar,
-    MckedRibbonBar,
+    MockedRibbonBar,
   },
   setup() {
     const def = [];

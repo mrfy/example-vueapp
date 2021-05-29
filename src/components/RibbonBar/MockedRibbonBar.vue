@@ -1,13 +1,13 @@
 <template id="mockedRibbonBar">
-  <div class="center">
+  <div ref="resizeRef">
     <Tooltip
       v-if="showTooltip && tooltipObj.tooltipVisible"
       :x="tooltipObj.toolTipX"
       :y="tooltipObj.toolTipY"
       :bar="tooltipObj.bar"
     />
-    <svg ref="svgRef" class="ribbon" :width="width + 40" :height="height + 40">
-      <g transform="translate(20, 20)">
+    <svg ref="svgRef" class="ribbon">
+      <g transform="translate(0, 20)">
         <g class="bars" fill="none">
           <rect
             style="stroke-width:31;stroke:{{bar.fill}}"
@@ -44,6 +44,7 @@ import {
 } from "vue";
 import { Bar, RibbonDataType } from "../../types";
 import moment from "moment";
+import useResizeObserver from "@/use/resizeObserver";
 
 export default defineComponent({
   name: "MockedRibbonbar",
@@ -59,71 +60,67 @@ export default defineComponent({
   },
   setup(props) {
     const svgRef = ref(null);
+    const bars = ref();
 
-    const width = ref(750);
-    const height = ref(100);
+    const { resizeRef, resizeState } = useResizeObserver();
+
     const tooltipObj = reactive({
       toolTipX: 0,
       toolTipY: 0,
       bar: {},
       tooltipVisible: false,
     });
-    let bars = {};
+
+    const arrSum = (arr: number[]): number => arr.reduce((a, b) => a + b, 0);
 
     onMounted(() => {
       const svg = d3.select(svgRef.value);
 
       watchEffect(() => {
+        const from_ms = props.dataSet.domain.from.getTime();
+        const to_ms = props.dataSet.domain.to.getTime();
+        const difference_ms = to_ms - from_ms;
+
+        const { width, height } = resizeState.dimensions;
+
         const timeScale = d3s
           .scaleTime()
           .domain([props.dataSet.domain.from, props.dataSet.domain.to])
-          .range([0, width.value])
+          .range([0, width])
           .nice();
-
-        const opacity = props.showScale ? 1 : 0;
 
         svg
           .select(".time-axis")
           .call(d3.axisBottom(timeScale) as never) //!! fakkkkkkkkk !!
           .attr("stroke", "#000")
           .attr("stroke-opacity", "0.1")
-          .style("opacity", opacity);
+          .style("opacity", props.showScale ? 1 : 0);
+
+        const segLong = d3s
+          .scaleLinear()
+          .range([0, width])
+          .domain([0, difference_ms]);
+
+        let xPos: number[] = [];
+
+        bars.value = props.dataSet.states.map((d) => {
+          let longitude = arrSum(xPos);
+          const stateWidth = d.period.to.getTime() - d.period.from.getTime();
+          xPos.push(segLong(stateWidth));
+
+          return {
+            label: d.description,
+            x: xPos.length > 1 ? longitude : 0,
+            period: d.period,
+            from: moment(d.period.from).format("lll"),
+            to: moment(d.period.to).format("lll"),
+            width: segLong(stateWidth) + 1,
+            height: 35,
+            duration: moment.utc(stateWidth).format("HH:mm:ss"),
+            fill: d.color,
+          };
+        });
       });
-    });
-
-    const arrSum = (arr: number[]): number => arr.reduce((a, b) => a + b, 0);
-
-    const from_ms = props.dataSet.domain.from.getTime();
-    const to_ms = props.dataSet.domain.to.getTime();
-    const difference_ms = to_ms - from_ms;
-
-    const segLong = computed(() => {
-      return d3s
-        .scaleLinear()
-        .range([0, width.value])
-        .domain([0, difference_ms]);
-    });
-
-    bars = computed(() => {
-      let xPos: number[] = [];
-      let bars = props.dataSet.states.map((d) => {
-        let longitude = arrSum(xPos);
-        const stateWidth = d.period.to.getTime() - d.period.from.getTime();
-        xPos.push(segLong.value(stateWidth));
-
-        return {
-          label: d.description,
-          x: xPos.length > 1 ? longitude : 0,
-          period: d.period,
-          from: moment(d.period.from).format("lll"),
-          to: moment(d.period.to).format("lll"),
-          width: segLong.value(stateWidth) + 1,
-          height: 35,
-          duration: moment.utc(stateWidth).format("HH:mm:ss"),
-          fill: d.color,
-        };
-      });
-      return bars;
     });
 
     const move = (evt: any, bar: Bar) => {
@@ -138,16 +135,25 @@ export default defineComponent({
     };
 
     return {
-      height: height.value,
-      width: width.value,
       bars,
       move,
       cancelMove,
       tooltipObj,
       svgRef,
+      resizeRef,
     };
   },
 });
 </script>
 
-<style lang="scss"></style>
+<style>
+.ribbon {
+  /* important for responsiveness */
+  display: block;
+  fill: none;
+  stroke: none;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+</style>

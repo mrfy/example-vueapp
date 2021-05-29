@@ -1,7 +1,13 @@
 <template>
-  <div style="display: table-caption">
+  <div>
+    <label for="scales" class="playground">Experimental playground</label>
     <div id="v-model-basic" class="demo">
-      <input v-model="inputValue" placeholder="edit me" @keyup.enter="addPet" />
+      <input
+        v-model="inputValue"
+        type="number"
+        placeholder="edit me"
+        @keyup.enter="onSubmit"
+      />
       <button class="button is-link" @click="onSubmit">Submit</button>
 
       <p>Random states cnt is: {{ inputValue }}</p>
@@ -13,15 +19,6 @@
           v-model="showScale"
         />
         <label for="scales">Display scale</label>
-      </div>
-      <div>
-        <input
-          type="checkbox"
-          id="showTooltip"
-          name="showTooltip"
-          v-model="showTooltip"
-        />
-        <label for="scales">Display tooltip</label>
       </div>
     </div>
 
@@ -55,8 +52,7 @@ export default defineComponent({
     }
     const inputValue = ref(10);
     const dataOnRibbon = ref(def);
-    const showScale = ref(true);
-    const showTooltip = ref(true);
+    const showScale = ref(false);
 
     const onSubmit = () => {
       dataOnRibbon.value = [];
@@ -70,7 +66,6 @@ export default defineComponent({
       data: dataOnRibbon,
       inputValue,
       showScale,
-      showTooltip,
       onSubmit,
       RibbonDataJSON,
     };
@@ -88,5 +83,10 @@ export default defineComponent({
   margin-bottom: 40px;
   user-select: none;
   overflow-x: auto;
+}
+.playground {
+  font-size: 1.2rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: red;
 }
 </style>

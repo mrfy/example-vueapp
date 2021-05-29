@@ -4,12 +4,12 @@
     <ul>
       <li>
         <router-link :to="{ name: 'PureRibbonBar.index' }"
-          >pure RibbonBar
+          >RibbonBar playground
         </router-link>
       </li>
       <li>
         <router-link :to="{ name: 'RibbonBarView.index' }">
-          RibbonBar</router-link
+          Synapstry ribbon</router-link
         >
       </li>
     </ul>
