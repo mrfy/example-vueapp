@@ -1,9 +1,10 @@
 <template id="itemToolTip">
   <div class="toolTip" :style="position">
-    <p>From: {{ bar.from }}</p>
-    <p>To: {{ bar.to }}</p>
-    <p>Duration: {{ bar.duration }}</p>
-    <p>{{ bar.label }}</p>
+    <p>
+      Width: <span>{{ bar.width }}</span>
+    </p>
+    <p>fill: {{ bar.fill }}</p>
+    <p>Quantity: aa</p>
   </div>
 </template>
 
@@ -23,6 +24,7 @@ export default defineComponent({
       return {
         top: `${props.y + 10}px`,
         left: `${props.x + 10}px`,
+        bar: props.bar,
       };
     });
 

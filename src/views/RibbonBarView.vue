@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <RibbonBar
+    <!-- <RibbonBar
       class="chart"
       :data-set="data"
       :showScale="showScale"
@@ -33,7 +33,7 @@
       :margin-top="40"
       :tick-count="5"
       :bar-padding="0.4"
-    />
+    /> -->
     <MckedRibbonBar
       class="chart"
       :data-set="RibbonDataJSON"
@@ -48,14 +48,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import RibbonBar from "@/components/RibbonBar/RibbonBar.vue";
+// import RibbonBar from "@/components/RibbonBar/RibbonBar.vue";
 import MckedRibbonBar from "@/components/RibbonBar/MockedRibbonBar.vue";
 import { RibbonDataJSON } from "../mocks/ribbonData";
 
 export default defineComponent({
   name: "ribbonBarView",
   components: {
-    RibbonBar,
+    // RibbonBar,
     MckedRibbonBar,
   },
   setup() {

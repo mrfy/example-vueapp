@@ -6,7 +6,8 @@
       :y="tooltipObj.toolTipY"
       :bar="tooltipObj.bar"
     />
-    <svg class="ribbon" :width="width + 40" :height="height + 40">
+
+    <svg ref="svgRef" class="ribbon" :width="width + 40" :height="height + 40">
       <g transform="translate(20, 20)">
         <g class="bars" fill="none">
           <rect
@@ -20,47 +21,35 @@
             :y="0"
             v-on:mousemove="move($event, bar)"
             v-on:mouseout="cancelMove"
-          >
-            > >
-          </rect>
+          ></rect>
         </g>
-      </g>
-      <g
-        v-if="showScale"
-        class="x-axis"
-        fill="none"
-        :transform="`translate(0, ${height})`"
-      >
         <g
-          class="tick"
-          opacity="1"
-          font-size="10"
-          font-family="sans-serif"
-          text-anchor="middle"
-          v-for="(bar, index) in bars"
-          :key="index"
-          :transform="`translate(${bar.x + bar.width / 2}, 0)`"
-        >
-          <line stroke="currentColor" y2="4"></line>
-          <text fill="currentColor" y="4" dy="0.71em">{{ bar.xLabel }}</text>
-        </g>
+          v-if="showScale"
+          class="time-axis"
+          fill="none"
+          :transform="`translate(0, 35)`"
+        />
       </g>
     </svg>
   </div>
 </template>
 
 <script lang="ts">
+import d3s from "@/assets/d3s";
+import * as d3 from "d3";
+
+import Tooltip from "@/components/RibbonBar/StateTooltip.vue";
 import {
   computed,
   defineComponent,
+  onMounted,
+  PropType,
   reactive,
   ref,
-  PropType,
-  toRefs,
+  watchEffect,
 } from "vue";
-import d3 from "@/assets/d3";
-import Tooltip from "@/components/RibbonBar/StateTooltip.vue";
 import { RibbonDataType } from "../../types";
+import moment from "moment";
 
 export default defineComponent({
   name: "MockedRibbonbar",
@@ -74,6 +63,8 @@ export default defineComponent({
     Tooltip,
   },
   setup(props) {
+    const svgRef = ref(null);
+
     const width = ref(750);
     const height = ref(100);
     const tooltipObj = reactive({
@@ -84,19 +75,32 @@ export default defineComponent({
     });
     let bars = {};
 
-    console.log(`props.dataSet`, props.dataSet);
+    onMounted(() => {
+      const svg = d3.select(svgRef.value);
+
+      watchEffect(() => {
+        const timeScale = d3s
+          .scaleTime()
+          .domain([props.dataSet.domain.from, props.dataSet.domain.to])
+          .range([0, width.value])
+          .nice();
+
+        svg
+          .select(".time-axis")
+          .call(d3.axisBottom(timeScale) as any)
+          .attr("stroke", "#000")
+          .attr("stroke-opacity", "0.1");
+      });
+    });
 
     const arrSum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
 
+    const from_ms = props.dataSet.domain.from.getTime();
+    const to_ms = props.dataSet.domain.to.getTime();
+    const difference_ms = to_ms - from_ms;
+
     const segLong = computed(() => {
-      const from_ms = props.dataSet.domain.from.getTime();
-      const to_ms = props.dataSet.domain.to.getTime();
-      const difference_ms = to_ms - from_ms;
-
-      // let values = props.dataSet.map((e) => e[1]);
-      // let sum = arrSum(values);
-
-      return d3
+      return d3s
         .scaleLinear()
         .range([0, width.value])
         .domain([0, difference_ms]);
@@ -110,18 +114,20 @@ export default defineComponent({
         xPos.push(segLong.value(stateWidth));
 
         return {
-          xLabel: d.description,
+          label: d.description,
           x: xPos.length > 1 ? longitude : 0,
-          y: 0,
+          period: d.period,
+          from: moment(d.period.from).format("lll"),
+          to: moment(d.period.to).format("lll"),
           width: segLong.value(stateWidth) + 1,
           height: 35,
-          fill: "#" + Math.floor(Math.random() * 16777215).toString(16),
+          duration: moment.utc(stateWidth).format("HH:mm:ss"),
+          fill: d.color,
         };
       });
       return bars;
     });
 
-    console.log(`bars`, bars);
     const move = (evt: any, bar: any) => {
       tooltipObj.toolTipX = evt.pageX;
       tooltipObj.toolTipY = evt.pageY;
@@ -130,7 +136,6 @@ export default defineComponent({
     };
 
     const cancelMove = function() {
-      console.log(`cancelMove`);
       tooltipObj.showTooltip = false;
     };
 
@@ -141,6 +146,7 @@ export default defineComponent({
       move,
       cancelMove,
       tooltipObj,
+      svgRef,
     };
   },
 });

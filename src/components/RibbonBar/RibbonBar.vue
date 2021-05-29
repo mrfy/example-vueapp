@@ -1,6 +1,6 @@
 <template id="ribbonBar">
   <div class="center">
-    <Tooltip
+    <FakeTooltip
       v-if="tooltipObj.showTooltip"
       :x="tooltipObj.toolTipX"
       :y="tooltipObj.toolTipY"
@@ -52,7 +52,7 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from "vue";
 import d3 from "@/assets/d3";
-import Tooltip from "@/components/RibbonBar/StateTooltip.vue";
+import FakeTooltip from "@/components/RibbonBar/FakeTooltip.vue";
 
 export default defineComponent({
   name: "Ribbonbar",
@@ -63,7 +63,7 @@ export default defineComponent({
     showScale: { default: false },
   },
   components: {
-    Tooltip,
+    FakeTooltip,
   },
   setup(props) {
     const width = ref(750);
