@@ -7,31 +7,39 @@ export const RibbonDataJSON = {
     {
       period: {
         from: new Date("2021-05-10T06:00:00.000+02:00"),
+        to: new Date("2021-05-10T07:34:17.000+02:00"),
+      },
+      description: "Excepteur sint obcaecat cupiditat",
+      color: "#81B622",
+    },
+    {
+      period: {
+        from: new Date("2021-05-10T07:34:17.000+02:00"),
         to: new Date("2021-05-10T09:31:02.000+02:00"),
       },
-      description: "XYZ te12312fdsfsd  fsd fsdfsf 3st state",
+      description: " quis nostrum exercitationem ullam laboriosam",
       color: "#2AA1A5",
     },
     {
       period: {
         from: new Date("2021-05-10T09:31:02.000+02:00"),
-        to: new Date("2021-05-10T10:00:00.000+02:00"),
+        to: new Date("2021-05-10T10:23:04.000+02:00"),
       },
       description: "XYZ te331st state",
-      color: "#Ab1115",
+      color: "#DF362D",
     },
     {
       period: {
-        from: new Date("2021-05-10T10:00:00.000+02:00"),
+        from: new Date("2021-05-10T10:23:04.000+02:00"),
         to: new Date("2021-05-10T11:00:00.000+02:00"),
       },
-      description: "XYZ test s123tate",
+      description: "consectetur adipisci elit, eiusmod",
       color: "#1b7aA1",
     },
     {
       period: {
         from: new Date("2021-05-10T11:00:00.000+02:00"),
-        to: new Date("2021-05-10T13:00:00.000+02:00"),
+        to: new Date("2021-05-10T13:17:04.000+02:00"),
       },
       description: "XYZ test state 23 13 ",
       color: "#BADBB1",
