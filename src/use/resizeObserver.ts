@@ -14,8 +14,6 @@ export const useResizeObserver = () => {
 
   const observer = new ResizeObserver((entries: ResizeObserverEntry[]) => {
     entries.forEach((entry: ResizeObserverEntry) => {
-      console.log("width", entry.contentRect.width);
-      console.log("height", entry.contentRect.height);
       resizeState.dimensions = entry.contentRect;
     });
   });
